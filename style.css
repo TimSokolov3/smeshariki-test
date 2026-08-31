@@ -108,6 +108,93 @@ body {
   50% { transform: translateY(-10px); }
 }
 
+.avatars-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  gap: 12px 6px;
+  margin-bottom: 20px;
+}
+
+.mini-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.2s ease;
+}
+
+.mini-avatar:hover {
+  transform: scale(1.1) translateY(-3px);
+}
+
+.mini-avatar-name {
+  font-size: 11px;
+  color: #777;
+  font-weight: 600;
+}
+
+.avatar-svg {
+  display: block;
+}
+
+.result-avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+  animation: bounce 2.4s ease-in-out infinite;
+}
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e6e6e6;
+  transition: all 0.3s ease;
+}
+
+.step-dot.active {
+  background: #ff6a88;
+  transform: scale(1.3);
+}
+
+.step-dot.done {
+  background: #ffb2ba;
+}
+
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  animation-name: confettiFall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confettiFall {
+  to {
+    transform: translateY(105vh) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
 h1 {
   font-size: 26px;
   margin: 0 0 12px;
