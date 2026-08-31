@@ -1,63 +1,54 @@
-const CHARACTERS = {
+const ITEMS = {
   krosh: {
     name: "Крош",
-    emoji: "🐰",
     color: "#f4a7b9",
     tagline: "Безбашенный заяц, который живёт на скорости!",
     desc: "Ты энергичный и смелый, обожаешь приключения и не боишься рисковать. Скука — твой главный враг."
   },
   ezhik: {
     name: "Ёжик",
-    emoji: "🦔",
     color: "#c98a5c",
     tagline: "Рассудительный друг, на которого можно положиться.",
     desc: "Ты цените порядок, дружбу и природу. Всегда готов помочь и навести гармонию вокруг."
   },
   kopatych: {
     name: "Копатыч",
-    emoji: "🐻",
     color: "#a9734f",
     tagline: "Трудолюбивый садовод с золотыми руками.",
     desc: "Ты спокойный, надёжный и заботливый. Любишь труд, порядок и вкусные домашние заготовки."
   },
   barash: {
     name: "Бараш",
-    emoji: "🐑",
     color: "#efe6d8",
     tagline: "Романтичный поэт и немного меланхолик.",
     desc: "Ты тонко чувствуешь мир, любишь мечтать и сочинять. Иногда грустишь — и это тоже нормально."
   },
   nyusha: {
     name: "Нюша",
-    emoji: "🐷",
     color: "#f6b8c4",
     tagline: "Королева стиля и уверенности в себе.",
     desc: "Ты обожаешь внимание, красоту и яркие эмоции. С тобой никогда не скучно!"
   },
   pin: {
     name: "Пин",
-    emoji: "🐧",
     color: "#3c4a5e",
     tagline: "Гениальный изобретатель-перфекционист.",
     desc: "Ты технарь до мозга костей: любишь точность, эксперименты и новые изобретения."
   },
   karkarych: {
     name: "Кар-Карыч",
-    emoji: "🐦",
     color: "#4a4458",
     tagline: "Обаятельный артист с богатой историей.",
     desc: "Ты харизматичный, любишь сцену и хорошую историю. Дружба и красивый жест — твоя стихия."
   },
   sovunya: {
     name: "Совунья",
-    emoji: "🦉",
     color: "#c99b6a",
     tagline: "Мудрая целительница и заботливая душа.",
     desc: "Ты заботишься обо всех вокруг, ценишь мудрость и всегда готова прийти на помощь."
   },
   losyash: {
     name: "Лосяш",
-    emoji: "🦌",
     color: "#a9c4d8",
     tagline: "Учёный, который знает ответ на любой вопрос.",
     desc: "Ты любишь науку, факты и объяснения. Логика и любопытство — твои лучшие друзья."
@@ -66,7 +57,7 @@ const CHARACTERS = {
 
 // Оригинальные нарисованные SVG-аватарки (собственный дизайн, не копирует персонажей мультфильма)
 function avatarSvg(key, size) {
-  const c = CHARACTERS[key].color;
+  const c = ITEMS[key].color;
   const gid = `g-${key}`;
 
   const eyes = `
@@ -202,172 +193,11 @@ const QUESTIONS = [
   }
 ];
 
-const state = {
-  step: -1, // -1 = стартовый экран
-  scores: {}
-};
-
-function resetScores() {
-  state.scores = {};
-  Object.keys(CHARACTERS).forEach((key) => (state.scores[key] = 0));
-}
-
-function render() {
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  if (state.step === -1) {
-    app.appendChild(renderStart());
-  } else if (state.step < QUESTIONS.length) {
-    app.appendChild(renderQuestion(state.step));
-  } else {
-    app.appendChild(renderResult());
-  }
-}
-
-function renderStart() {
-  const card = document.createElement("div");
-  card.className = "card";
-  const avatarsRow = Object.keys(CHARACTERS)
-    .map(
-      (key) => `
-      <div class="mini-avatar">
-        ${avatarSvg(key, 72)}
-        <span class="mini-avatar-name">${CHARACTERS[key].name}</span>
-      </div>`
-    )
-    .join("");
-  card.innerHTML = `
-    <span class="emoji-big">🌈</span>
-    <h1>Кто ты из Смешариков?</h1>
-    <div class="avatars-row">${avatarsRow}</div>
-    <p>Пройди тест из ${QUESTIONS.length} вопросов и узнай, какой персонаж отражает твой характер!</p>
-    <button class="btn" id="start-btn">Начать тест</button>
-  `;
-  card.querySelector("#start-btn").addEventListener("click", () => {
-    resetScores();
-    state.step = 0;
-    render();
-  });
-  return card;
-}
-
-function renderQuestion(index) {
-  const question = QUESTIONS[index];
-  const progress = Math.round((index / QUESTIONS.length) * 100);
-
-  const card = document.createElement("div");
-  card.className = "card";
-
-  const progressWrap = document.createElement("div");
-  progressWrap.className = "progress-wrap";
-  progressWrap.innerHTML = `<div class="progress-bar" style="width:${progress}%"></div>`;
-  card.appendChild(progressWrap);
-
-  const dots = document.createElement("div");
-  dots.className = "step-dots";
-  QUESTIONS.forEach((_, i) => {
-    const dot = document.createElement("span");
-    dot.className = "step-dot" + (i === index ? " active" : i < index ? " done" : "");
-    dots.appendChild(dot);
-  });
-  card.appendChild(dots);
-
-  const questionText = document.createElement("div");
-  questionText.className = "question-text";
-  questionText.textContent = `Вопрос ${index + 1} из ${QUESTIONS.length}. ${question.text}`;
-  card.appendChild(questionText);
-
-  const options = document.createElement("div");
-  options.className = "options";
-
-  question.options.forEach((option) => {
-    const btn = document.createElement("button");
-    btn.className = "option-btn";
-    btn.textContent = option.label;
-    btn.addEventListener("click", () => {
-      Object.entries(option.points).forEach(([key, value]) => {
-        state.scores[key] += value;
-      });
-      state.step += 1;
-      render();
-    });
-    options.appendChild(btn);
-  });
-
-  card.appendChild(options);
-  return card;
-}
-
-function getWinner() {
-  let bestKey = null;
-  let bestScore = -Infinity;
-  Object.entries(state.scores).forEach(([key, score]) => {
-    if (score > bestScore) {
-      bestScore = score;
-      bestKey = key;
-    }
-  });
-  return bestKey;
-}
-
-function renderResult() {
-  const winnerKey = getWinner();
-  const winner = CHARACTERS[winnerKey];
-
-  const card = document.createElement("div");
-  card.className = "card";
-  card.innerHTML = `
-    <div class="result-avatar">${avatarSvg(winnerKey, 180)}</div>
-    <div class="result-name">Ты — ${winner.name}!</div>
-    <div class="result-tagline">${winner.tagline}</div>
-    <p>${winner.desc}</p>
-    <div class="actions">
-      <button class="btn" id="restart-btn">Пройти ещё раз</button>
-      <button class="btn btn-secondary" id="copy-btn">Скопировать ссылку на тест</button>
-    </div>
-    <div class="footer-note">Тест создан фанатами, не связан с официальными правообладателями «Смешариков».</div>
-  `;
-
-  card.querySelector("#restart-btn").addEventListener("click", () => {
-    state.step = -1;
-    render();
-  });
-
-  card.querySelector("#copy-btn").addEventListener("click", async () => {
-    const copyBtn = card.querySelector("#copy-btn");
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      copyBtn.textContent = "Ссылка скопирована!";
-    } catch (e) {
-      copyBtn.textContent = window.location.href;
-    }
-    setTimeout(() => {
-      copyBtn.textContent = "Скопировать ссылку на тест";
-    }, 2000);
-  });
-
-  launchConfetti();
-
-  return card;
-}
-
-function launchConfetti() {
-  const colors = ["#ff9a8b", "#ff6a88", "#a8e6cf", "#ffd3b6", "#ffaaa5", "#a9c4d8"];
-  const container = document.createElement("div");
-  container.className = "confetti-container";
-  for (let i = 0; i < 40; i++) {
-    const piece = document.createElement("span");
-    piece.className = "confetti-piece";
-    piece.style.left = Math.random() * 100 + "vw";
-    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.animationDuration = 2.5 + Math.random() * 2 + "s";
-    piece.style.animationDelay = Math.random() * 0.6 + "s";
-    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
-    container.appendChild(piece);
-  }
-  document.body.appendChild(container);
-  setTimeout(() => container.remove(), 5000);
-}
-
-render();
+initQuizApp({
+  items: ITEMS,
+  questions: QUESTIONS,
+  avatarSvg,
+  title: "Кто ты из Смешариков?",
+  subtitle: "",
+  footerNote: "Тест создан фанатами, не связан с официальными правообладателями «Смешариков»."
+});
